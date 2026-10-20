@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
 type Testimonial = {
   content: string;
   author: string;
@@ -27,6 +31,48 @@ const testimonials: Testimonial[] = [
     position: "Working Professional, Bangalore",
     rating: 4,
   },
+  {
+    content:
+      "We listed our flat for resale and got genuine enquiries within a week. The team handled negotiations and paperwork end to end. Highly recommended.",
+    author: "Amit Deshmukh",
+    position: "Property Seller, Thane",
+    rating: 5,
+  },
+  {
+    content:
+      "Investing from abroad felt risky, but their team verified every document and did video walkthroughs of each shortlisted property. Bought my flat with full confidence.",
+    author: "Farhan Khan",
+    position: "NRI Investor, Dubai",
+    rating: 5,
+  },
+  {
+    content:
+      "Found a builder floor in the exact locality we wanted, under our budget. The price was exactly what was listed — no hidden charges anywhere.",
+    author: "Meera Iyer",
+    position: "Home Buyer, Chennai",
+    rating: 4,
+  },
+  {
+    content:
+      "Their new launch section helped us book early in a project we had been tracking for months. The possession timeline and payment plan were crystal clear.",
+    author: "Vikram Malhotra",
+    position: "Investor, Gurgaon",
+    rating: 5,
+  },
+  {
+    content:
+      "Moved cities twice in two years and found rentals both times through Property Kaarobaari. Verified owners, fair deposits, zero broker drama.",
+    author: "Kavya Nair",
+    position: "Tenant, Hyderabad",
+    rating: 5,
+  },
+  {
+    content:
+      "The team understood exactly what we needed — a villa near the kids' school. Patient with our many visits and honest about every property's pros and cons.",
+    author: "Rohan & Anjali Joshi",
+    position: "Home Buyers, Navi Mumbai",
+    rating: 5,
+  },
 ];
 
 function Stars({ rating }: { rating: number }) {
@@ -38,7 +84,9 @@ function Stars({ rating }: { rating: number }) {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           className={`h-4 w-4 ${
-            i < rating ? "fill-amber-400 text-amber-400" : "fill-zinc-200 text-zinc-200"
+            i < rating
+              ? "fill-amber-400 text-amber-400"
+              : "fill-zinc-200 text-zinc-200"
           }`}
           aria-hidden="true"
         >
@@ -50,11 +98,34 @@ function Stars({ rating }: { rating: number }) {
 }
 
 export default function Testimonials() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const pausedRef = useRef(false);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (pausedRef.current) return;
+      const el = trackRef.current;
+      if (!el) return;
+
+      const card = el.querySelector<HTMLElement>("[data-card]");
+      const step = card ? card.offsetWidth + 24 : el.clientWidth;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+
+      if (atEnd) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: step, behavior: "smooth" });
+      }
+    }, 4000);
+    return () => clearInterval(id);
+  }, []);
+
   return (
     <section className="bg-linear-to-b from-white to-blue-50/40 py-16 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto mb-12 max-w-2xl text-center">
-          <span className="rounded-full border border-blue-200 bg-linear-to-r from-blue-100 to-blue-50 px-5 py-1.5 text-xs font-bold uppercase tracking-wide text-blue-600">
+          <span className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-linear-to-r from-blue-100 to-blue-50 px-5 py-1.5 text-xs font-bold uppercase tracking-wide text-blue-600">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
             Testimonials
           </span>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-blue-950 sm:text-4xl">
@@ -66,11 +137,21 @@ export default function Testimonials() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div
+          ref={trackRef}
+          onMouseEnter={() => {
+            pausedRef.current = true;
+          }}
+          onMouseLeave={() => {
+            pausedRef.current = false;
+          }}
+          className="scrollbar-none flex gap-6 overflow-x-auto pb-8 pt-6"
+        >
           {testimonials.map((t) => (
             <figure
+              data-card
               key={t.author}
-              className="relative flex flex-col rounded-2xl border border-blue-100/60 bg-white p-6 pt-8 shadow-lg"
+              className="relative flex w-full shrink-0 flex-col rounded-2xl border border-blue-100/60 bg-white p-6 pt-8 shadow-lg sm:w-[calc(50%-0.75rem)] lg:w-[calc(33.333%-1rem)]"
             >
               <span className="absolute -top-4 left-6 flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 text-white shadow-md">
                 <svg
@@ -95,6 +176,7 @@ export default function Testimonials() {
                   {t.author
                     .split(" ")
                     .map((n) => n[0])
+                    .slice(0, 2)
                     .join("")}
                 </span>
                 <div>

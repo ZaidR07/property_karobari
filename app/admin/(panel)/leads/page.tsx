@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import AdminSection from "../section";
+import { getAllLeads } from "@/app/lib/leads";
+import LeadManager from "./lead-manager";
 
 export const metadata: Metadata = {
   title: "Leads | Admin",
 };
 
-export default function AdminLeadsPage() {
-  return (
-    <AdminSection
-      title="Leads"
-      description="Track and manage sales leads."
-    />
-  );
+// Reads MongoDB at request time.
+export const instant = false;
+
+export default async function AdminLeadsPage() {
+  const leads = await getAllLeads();
+  return <LeadManager leads={leads} />;
 }

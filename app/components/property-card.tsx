@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { PropertyRecord } from "@/app/lib/types";
 import {
   formatPrice,
-  listingLabel,
   listingTypeToPath,
 } from "@/app/lib/property-format";
 
@@ -43,9 +42,6 @@ export default function PropertyCard({
             No Image
           </div>
         )}
-        <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-blue-700 shadow-sm">
-          {listingLabel(property.listingType)}
-        </span>
       </div>
 
       <div className="flex flex-1 flex-col p-5">

@@ -11,7 +11,13 @@ export const instant = false;
 
 type Props = {
   params: Promise<{ type: string }>;
-  searchParams: Promise<{ city?: string; q?: string }>;
+  searchParams: Promise<{
+    city?: string;
+    q?: string;
+    ptype?: string;
+    min?: string;
+    max?: string;
+  }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -30,9 +36,18 @@ export default async function PropertiesPage({ params, searchParams }: Props) {
   const config = PROPERTY_PAGES[type];
   if (!config) notFound();
 
-  const { city = "", q = "" } = await searchParams;
+  const { city = "", q = "", ptype = "", min = "", max = "" } =
+    await searchParams;
+  const minPrice = Number(min);
+  const maxPrice = Number(max);
   const [properties, cities] = await Promise.all([
-    getPublishedProperties(config.listingType, { city, q }),
+    getPublishedProperties(config.listingType, {
+      city,
+      q,
+      ptype,
+      min: Number.isFinite(minPrice) && min !== "" ? minPrice : undefined,
+      max: Number.isFinite(maxPrice) && max !== "" ? maxPrice : undefined,
+    }),
     getCities(),
   ]);
   const cityLabel = cities.find((c) => c.city === city)?.city ?? city;
@@ -52,6 +67,7 @@ export default async function PropertiesPage({ params, searchParams }: Props) {
       <div className="container mx-auto px-6 pt-10">
         <p className="mb-6 text-sm font-medium text-zinc-600">
           {properties.length} {properties.length === 1 ? "property" : "properties"}
+          {ptype ? ` · ${ptype}` : ""}
           {cityLabel ? ` in ${cityLabel}` : ""}
           {q ? ` matching “${q}”` : ""}
         </p>

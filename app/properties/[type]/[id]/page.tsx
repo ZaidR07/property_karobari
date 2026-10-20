@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import EnquireButton from "@/app/components/enquire-button";
 import PageBanner from "@/app/components/page-banner";
+import PropertyGallery from "@/app/components/property-gallery";
 import { getPublishedProperty } from "@/app/lib/properties";
 import {
   formatPrice,
@@ -64,7 +65,10 @@ export default async function PropertyDetailPage({ params }: Props) {
     : isRentLike
       ? "Rent"
       : "Price";
-  const hero = property.thumbnail || property.images[0] || null;
+  const gallery = [
+    ...(property.thumbnail ? [property.thumbnail] : []),
+    ...property.images,
+  ].filter((src, index, arr) => arr.indexOf(src) === index);
 
   return (
     <section className="min-h-screen bg-linear-to-br from-white via-blue-50/30 to-blue-100/20 pb-16">
@@ -84,20 +88,16 @@ export default async function PropertyDetailPage({ params }: Props) {
 
       <div className="container mx-auto px-6 pt-10">
         <article className="overflow-hidden rounded-2xl border border-blue-100/50 bg-white shadow-lg">
-          {hero && (
-            <div className="w-full bg-blue-50">
-              <div className="aspect-video w-full md:aspect-16/7 lg:aspect-16/6">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={hero}
-                  alt={property.title || "Property"}
-                  className="block h-full w-full object-cover"
+          <div className="p-6 md:p-10">
+            {(gallery.length > 0 || property.videos.length > 0) && (
+              <div className="mb-8">
+                <PropertyGallery
+                  images={gallery}
+                  video={property.videos[0] ?? null}
+                  title={property.title || "Property"}
                 />
               </div>
-            </div>
-          )}
-
-          <div className="p-6 md:p-10">
+            )}
             <div className="flex flex-wrap items-center justify-between gap-4">
               <span className="inline-block rounded-full border border-blue-200 bg-linear-to-r from-blue-100 to-blue-50 px-4 py-1 text-xs font-bold text-blue-600">
                 {listingLabel(property.listingType)}
@@ -210,26 +210,6 @@ export default async function PropertyDetailPage({ params }: Props) {
               </div>
             )}
 
-            {property.images.length > 0 && (
-              <div className="mt-8 border-t border-slate-100 pt-6">
-                <p className="text-xs uppercase tracking-wide text-zinc-500">
-                  Property Images
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {property.images.map((image) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      key={image}
-                      src={image}
-                      alt="Property image"
-                      className="h-32 w-full rounded-lg object-cover"
-                      loading="lazy"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
             <div className="mt-8 flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-linear-to-r from-blue-100 to-blue-50 p-6">
               <div>
                 <p className="text-lg font-bold text-blue-900">
@@ -239,12 +219,11 @@ export default async function PropertyDetailPage({ params }: Props) {
                   Get in touch with our team for a site visit or more details.
                 </p>
               </div>
-              <Link
-                href="/contact"
-                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-              >
-                Contact Us
-              </Link>
+              <EnquireButton
+                propertyId={property.id}
+                propertyTitle={property.title || "Property"}
+                propertyUrl={`/properties/${type}/${id}`}
+              />
             </div>
           </div>
         </article>

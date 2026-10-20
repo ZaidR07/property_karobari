@@ -80,6 +80,17 @@ const tabs = [
     ),
   },
   {
+    href: "/admin/employees",
+    label: "Employees",
+    icon: (
+      <>
+        <rect x="3" y="4" width="18" height="16" rx="2" />
+        <circle cx="9" cy="10" r="2" />
+        <path d="M15 9h4M15 13h4M6 16c.6-1.5 1.7-2 3-2s2.4.5 3 2" />
+      </>
+    ),
+  },
+  {
     href: "/admin/settings",
     label: "Settings",
     icon: (
@@ -109,17 +120,27 @@ const tabs = [
   },
 ];
 
+// Visible only to the super admin (rank 1).
+const SUPER_ADMIN_TABS = new Set([
+  "/admin/blogs",
+  "/admin/enquiries",
+  "/admin/settings",
+  "/admin/master",
+]);
+
 function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export default function AdminSidebar({ email }: { email: string }) {
+export default function AdminSidebar({ rank }: { rank: number }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const nav = (
     <nav className="flex-1 space-y-1 px-3 py-4">
-      {tabs.map((tab) => (
+      {tabs
+        .filter((tab) => rank <= 1 || !SUPER_ADMIN_TABS.has(tab.href))
+        .map((tab) => (
         <Link
           key={tab.href}
           href={tab.href}
@@ -139,9 +160,7 @@ export default function AdminSidebar({ email }: { email: string }) {
 
   const footer = (
     <div className="border-t border-zinc-200 p-4">
-      <p className="truncate text-xs text-zinc-500">Signed in as</p>
-      <p className="truncate text-sm font-medium text-zinc-900">{email}</p>
-      <form action={logout} className="mt-3">
+      <form action={logout}>
         <button
           type="submit"
           className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100"

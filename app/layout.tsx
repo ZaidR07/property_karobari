@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import Footer from "./components/footer";
+import FooterVisibility from "./components/footer-visibility";
 import Navbar from "./components/navbar";
 import "./globals.css";
 
@@ -34,7 +35,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </Suspense>
         {children}
         <Suspense fallback={null}>
-          <Footer />
+          <FooterVisibility>
+            <Footer />
+          </FooterVisibility>
         </Suspense>
       </body>
     </html>

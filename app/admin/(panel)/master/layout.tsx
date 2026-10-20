@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+import { isSuperAdmin } from "@/app/lib/admin-access";
 import MasterSubNav from "./master-subnav";
 
 export const metadata: Metadata = {
   title: "Master | Admin",
 };
 
-export default function MasterLayout({
+// Reads the session per request.
+export const instant = false;
+
+export default async function MasterLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (!(await isSuperAdmin())) redirect("/admin/dashboard");
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">

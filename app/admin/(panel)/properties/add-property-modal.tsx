@@ -1,7 +1,12 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { createProperty, updateProperty } from "@/app/actions/properties";
+import {
+  createProperty,
+  deletePropertyMedia,
+  replacePropertyMedia,
+  updateProperty,
+} from "@/app/actions/properties";
 import type { PropertyRecord } from "@/app/lib/types";
 import SearchableSelect from "./searchable-select";
 
@@ -18,11 +23,8 @@ const PROPERTY_TYPES = [
   "Flats",
   "Builder Floors",
   "Row House",
-  "Studio Apartments",
   "Villa",
   "Shop",
-  "Factory",
-  "Ware Houses",
   "Office Space",
 ];
 
@@ -154,6 +156,110 @@ function Field({
     <div>
       <label className={labelClass}>{label}</label>
       {children}
+    </div>
+  );
+}
+
+type MediaField = "thumbnail" | "images" | "videos";
+
+function MediaButtons({
+  propertyId,
+  field,
+  url,
+  accept,
+  onError,
+}: {
+  propertyId: string;
+  field: MediaField;
+  url: string;
+  accept: string;
+  onError: (message: string | null) => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleDelete() {
+    if (!window.confirm("Delete this media?")) return;
+    setBusy(true);
+    const result = await deletePropertyMedia({ propertyId, field, url });
+    setBusy(false);
+    if (!result?.success) {
+      onError(result?.error ?? "Failed to delete media.");
+    }
+  }
+
+  async function handleReplace(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setBusy(true);
+    const result = await replacePropertyMedia({
+      propertyId,
+      field,
+      url,
+      file,
+    });
+    setBusy(false);
+    if (!result?.success) {
+      onError(result?.error ?? "Failed to replace media.");
+    }
+  }
+
+  return (
+    <div className="absolute right-1 top-1 flex gap-1">
+      <button
+        type="button"
+        title="Replace"
+        disabled={busy}
+        onClick={() => inputRef.current?.click()}
+        className="flex h-6 w-6 items-center justify-center rounded-md bg-white/90 text-zinc-700 shadow hover:bg-white disabled:opacity-50"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-3.5 w-3.5"
+          aria-hidden="true"
+        >
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
+      </button>
+      <button
+        type="button"
+        title="Delete"
+        disabled={busy}
+        onClick={handleDelete}
+        className="flex h-6 w-6 items-center justify-center rounded-md bg-red-600/90 text-white shadow hover:bg-red-600 disabled:opacity-50"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-3.5 w-3.5"
+          aria-hidden="true"
+        >
+          <path d="M3 6h18" />
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+        </svg>
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        className="hidden"
+        onChange={handleReplace}
+      />
     </div>
   );
 }
@@ -774,9 +880,87 @@ export default function AddPropertyModal({
               </div>
 
               {isEdit && hasExistingMedia && (
-                <p className="text-xs text-zinc-500">
-                  Already-uploaded media is kept unless you upload replacements.
-                </p>
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                    Current media
+                  </p>
+                  <div className="mt-3 flex flex-wrap items-start gap-4">
+                    {property?.thumbnail && (
+                      <div>
+                        <div className="group relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={property.thumbnail}
+                            alt="Current thumbnail"
+                            className="h-20 w-28 rounded-lg border border-zinc-200 object-cover"
+                          />
+                          <MediaButtons
+                            propertyId={property.id}
+                            field="thumbnail"
+                            url={property.thumbnail}
+                            accept="image/*"
+                            onError={setError}
+                          />
+                        </div>
+                        <p className="mt-1 text-center text-xs text-zinc-500">
+                          Thumbnail
+                        </p>
+                      </div>
+                    )}
+                    {(property?.images.length ?? 0) > 0 && (
+                      <div>
+                        <div className="flex flex-wrap gap-2">
+                          {property!.images.map((image) => (
+                            <div key={image} className="group relative">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={image}
+                                alt="Property image"
+                                className="h-20 w-28 rounded-lg border border-zinc-200 object-cover"
+                              />
+                              <MediaButtons
+                                propertyId={property!.id}
+                                field="images"
+                                url={image}
+                                accept="image/*"
+                                onError={setError}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                        <p className="mt-1 text-xs text-zinc-500">
+                          {property!.images.length} image
+                          {property!.images.length === 1 ? "" : "s"}
+                        </p>
+                      </div>
+                    )}
+                    {(property?.videos.length ?? 0) > 0 && (
+                      <div>
+                        <div className="group relative">
+                          <video
+                            src={property!.videos[0]}
+                            controls
+                            className="h-20 w-32 rounded-lg border border-zinc-200 object-cover"
+                          />
+                          <MediaButtons
+                            propertyId={property!.id}
+                            field="videos"
+                            url={property!.videos[0]}
+                            accept="video/*"
+                            onError={setError}
+                          />
+                        </div>
+                        <p className="mt-1 text-center text-xs text-zinc-500">
+                          Video
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-3 text-xs text-zinc-500">
+                    Already-uploaded media is kept unless you upload
+                    replacements.
+                  </p>
+                </div>
               )}
 
               {error && (

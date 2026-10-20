@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import { getDb } from "@/app/lib/mongodb";
 import type { PropertyRecord } from "@/app/lib/types";
 import AddPropertyModal from "./add-property-modal";
+import DeletePropertyButton from "./delete-property-button";
 import ViewPropertyModal from "./view-property-modal";
 
 export const metadata: Metadata = {
@@ -119,7 +120,7 @@ export default async function AdminPropertiesPage() {
                 <th className="px-4 py-3">Price</th>
                 <th className="hidden px-4 py-3 sm:table-cell">City</th>
                 <th className="px-4 py-3">Status</th>
-                <th className="w-28 px-4 py-3 text-right">Actions</th>
+                <th className="w-48 px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-zinc-100">
@@ -160,6 +161,10 @@ export default async function AdminPropertiesPage() {
                       <AddPropertyModal
                         cities={cityOptions}
                         property={record}
+                      />
+                      <DeletePropertyButton
+                        propertyId={record.id}
+                        title={record.title ?? "this property"}
                       />
                     </div>
                   </td>

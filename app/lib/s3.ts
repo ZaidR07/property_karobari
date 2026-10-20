@@ -1,0 +1,75 @@
+import "server-only";
+
+import { randomBytes } from "crypto";
+import path from "path";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+
+let loggedBucket = false;
+
+export function getS3() {
+  const { AWS_REGION, AWS_S3_BUCKET } = process.env;
+  if (!AWS_REGION || !AWS_S3_BUCKET) {
+    throw new Error(
+      "AWS_REGION and AWS_S3_BUCKET must be set in .env for file uploads.",
+    );
+  }
+  if (!loggedBucket) {
+    loggedBucket = true;
+    console.log(
+      `[s3] Uploading to bucket "${AWS_S3_BUCKET}" (region ${AWS_REGION})`,
+    );
+  }
+  return {
+    client: new S3Client({ region: AWS_REGION }),
+    bucket: AWS_S3_BUCKET,
+    publicBaseUrl:
+      process.env.AWS_S3_PUBLIC_BASE_URL ??
+      `https://${AWS_S3_BUCKET}.s3.${AWS_REGION}.amazonaws.com`,
+  };
+}
+
+export async function uploadFileToS3(file: File, prefix: string) {
+  const { client, bucket, publicBaseUrl } = getS3();
+  const ext =
+    path.extname(file.name).replace(".", "").toLowerCase() || "bin";
+  const key = `${prefix}/${Date.now()}-${randomBytes(4).toString("hex")}.${ext}`;
+
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: Buffer.from(await file.arrayBuffer()),
+      ContentType: file.type || "application/octet-stream",
+    }),
+  );
+
+  return `${publicBaseUrl}/${key}`;
+}
+
+export async function uploadFilesToS3(files: File[], prefix: string) {
+  const urls: string[] = [];
+  for (const file of files) {
+    if (file.size === 0) continue;
+    urls.push(await uploadFileToS3(file, prefix));
+  }
+  return urls;
+}
+
+export async function deleteFromS3(url: string | null, prefix: string) {
+  if (!url || url.startsWith("/")) return; // Local files aren't in S3.
+  const { client, bucket, publicBaseUrl } = getS3();
+  const key = url.startsWith(`${publicBaseUrl}/`)
+    ? url.slice(publicBaseUrl.length + 1)
+    : new URL(url).pathname.slice(1);
+  if (!key.startsWith(`${prefix}/`)) return;
+
+  try {
+    await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key }));
+  } catch {
+    // Object may already be gone — deletion should still proceed.
+  }
+}

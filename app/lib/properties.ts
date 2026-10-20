@@ -8,6 +8,10 @@ import type { PropertyRecord } from "./types";
 type PropertyOptions = {
   city?: string;
   q?: string;
+  ptype?: string;
+  min?: number;
+  max?: number;
+  limit?: number;
 };
 
 function serialize(
@@ -60,7 +64,7 @@ function serialize(
 
 export async function getPublishedProperties(
   listingType: string,
-  { city, q }: PropertyOptions = {},
+  { city, q, ptype, min, max, limit }: PropertyOptions = {},
 ): Promise<PropertyRecord[]> {
   await connection();
   const db = await getDb();
@@ -71,6 +75,19 @@ export async function getPublishedProperties(
   };
 
   if (city) filter.city = city;
+  if (ptype) {
+    filter.propertyType = new RegExp(
+      `^${ptype.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+      "i",
+    );
+  }
+
+  if (min !== undefined || max !== undefined) {
+    filter.price = {
+      ...(min !== undefined ? { $gte: min } : {}),
+      ...(max !== undefined ? { $lte: max } : {}),
+    };
+  }
 
   if (q) {
     const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
@@ -87,10 +104,51 @@ export async function getPublishedProperties(
     .collection("properties")
     .find(filter)
     .sort({ createdAt: -1 })
-    .limit(100)
+    .limit(limit ?? 100)
     .toArray();
 
   return docs.map(serialize);
+}
+
+export type PropertyTypeStat = {
+  propertyType: string;
+  count: number;
+  thumbnail: string | null;
+  listingType: string;
+};
+
+export async function getPropertyTypeStats(): Promise<PropertyTypeStat[]> {
+  await connection();
+  const db = await getDb();
+  const docs = await db
+    .collection("properties")
+    .aggregate([
+      { $match: { status: "published" } },
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: "$propertyType",
+          count: { $sum: 1 },
+          thumbnail: { $first: "$thumbnail" },
+          listingTypes: { $push: "$listingType" },
+        },
+      },
+    ])
+    .toArray();
+
+  return docs.map((doc) => {
+    const listingTypes = (doc.listingTypes as string[]) ?? [];
+    const counts = new Map<string, number>();
+    for (const t of listingTypes) counts.set(t, (counts.get(t) ?? 0) + 1);
+    const listingType =
+      [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? "sale";
+    return {
+      propertyType: String(doc._id ?? ""),
+      count: Number(doc.count ?? 0),
+      thumbnail: typeof doc.thumbnail === "string" ? doc.thumbnail : null,
+      listingType,
+    };
+  });
 }
 
 export async function getPublishedProperty(

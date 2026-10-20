@@ -1,17 +1,27 @@
 import type { Metadata } from "next";
+import { getOpenEnquiriesCount } from "@/app/lib/enquiries";
+import { getActiveLeadsCount } from "@/app/lib/leads";
 
 export const metadata: Metadata = {
   title: "Dashboard | Admin",
 };
 
-const stats = [
-  { label: "Total Properties", value: "—" },
-  { label: "Published Blogs", value: "—" },
-  { label: "New Enquiries", value: "—" },
-  { label: "Active Leads", value: "—" },
-];
+// Reads MongoDB at request time.
+export const instant = false;
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const [openEnquiries, activeLeads] = await Promise.all([
+    getOpenEnquiriesCount(),
+    getActiveLeadsCount(),
+  ]);
+
+  const stats = [
+    { label: "Total Properties", value: "—" },
+    { label: "Published Blogs", value: "—" },
+    { label: "Open Enquiries", value: String(openEnquiries) },
+    { label: "Active Leads", value: String(activeLeads) },
+  ];
+
   return (
     <div>
       <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">
