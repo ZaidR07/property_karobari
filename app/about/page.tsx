@@ -3,9 +3,9 @@ import Link from "next/link";
 import PageBanner from "@/app/components/page-banner";
 
 export const metadata: Metadata = {
-  title: "About Us | Property Kaarobaari",
+  title: "About Us | Property Karobari",
   description:
-    "Learn about Property Kaarobaari — our mission to make buying, selling and renting property in India simple and transparent.",
+    "Learn about Property Karobari — our mission to make buying, selling and renting property in India simple and transparent.",
 };
 
 function Icon({ path }: { path: React.ReactNode }) {
@@ -88,7 +88,7 @@ export default function AboutPage() {
     <section className="min-h-screen bg-linear-to-br from-white via-blue-50/30 to-blue-100/20 pb-16">
       <PageBanner
         title="About Us"
-        subtitle="Property Kaarobaari is on a mission to make real estate in India simple, transparent and accessible for everyone."
+        subtitle="Property Karobari is on a mission to make real estate in India simple, transparent and accessible for everyone."
         breadcrumb={[{ label: "Home", href: "/" }, { label: "About" }]}
       />
 
@@ -99,7 +99,7 @@ export default function AboutPage() {
               Who We Are
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-zinc-600 sm:text-base">
-              Property Kaarobaari started with a simple idea: finding a home
+              Property Karobari started with a simple idea: finding a home
               shouldn&apos;t be complicated. Whether you&apos;re buying your
               first flat, renting near your office, looking for a PG, or
               investing in a new launch — we bring every option together in one
@@ -136,7 +136,7 @@ export default function AboutPage() {
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-sm text-zinc-600">
             The principles that guide every listing, visit and deal on Property
-            Kaarobaari.
+            Karobari.
           </p>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {values.map((value) => (

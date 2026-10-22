@@ -12,7 +12,7 @@ type Testimonial = {
 const testimonials: Testimonial[] = [
   {
     content:
-      "Property Kaarobaari helped me find a 2BHK in my budget within two weeks. The listings were genuine and the team arranged site visits quickly. Smoothest home-buying experience I've had.",
+      "Property Karobari helped me find a 2BHK in my budget within two weeks. The listings were genuine and the team arranged site visits quickly. Smoothest home-buying experience I've had.",
     author: "Priya Sharma",
     position: "Home Buyer, Mumbai",
     rating: 5,
@@ -61,7 +61,7 @@ const testimonials: Testimonial[] = [
   },
   {
     content:
-      "Moved cities twice in two years and found rentals both times through Property Kaarobaari. Verified owners, fair deposits, zero broker drama.",
+      "Moved cities twice in two years and found rentals both times through Property Karobari. Verified owners, fair deposits, zero broker drama.",
     author: "Kavya Nair",
     position: "Tenant, Hyderabad",
     rating: 5,
@@ -133,7 +133,7 @@ export default function Testimonials() {
           </h2>
           <p className="mt-3 text-zinc-600">
             Hear from buyers, tenants, and professionals who found their space
-            with Property Kaarobaari.
+            with Property Karobari.
           </p>
         </div>
 

@@ -37,7 +37,7 @@ export default async function RecentlyListed() {
           Recently Listed
         </h2>
         <p className="mt-1 text-sm text-zinc-600">
-          The latest properties published on Property Kaarobaari.
+          The latest properties published on Property Karobari.
         </p>
 
         <div className="mt-8 space-y-10">

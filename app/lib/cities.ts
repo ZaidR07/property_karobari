@@ -1,6 +1,6 @@
 import "server-only";
 
-import { connection } from "next/server";
+import { cacheLife, cacheTag } from "next/cache";
 import { getDb } from "./mongodb";
 
 export type City = {
@@ -10,7 +10,9 @@ export type City = {
 };
 
 export async function getCities(): Promise<City[]> {
-  await connection();
+  "use cache";
+  cacheTag("cities");
+  cacheLife("hours");
   const db = await getDb();
   const docs = await db
     .collection("cities")

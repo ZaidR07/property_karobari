@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Property Kaarobaari",
+  title: "Property Karobari",
   description: "Find properties to buy, rent, and PG accommodations",
 };
 

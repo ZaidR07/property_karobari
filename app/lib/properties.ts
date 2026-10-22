@@ -1,7 +1,7 @@
 import "server-only";
 
 import { ObjectId } from "mongodb";
-import { connection } from "next/server";
+import { cacheLife, cacheTag } from "next/cache";
 import { getDb } from "./mongodb";
 import type { PropertyRecord } from "./types";
 
@@ -66,7 +66,9 @@ export async function getPublishedProperties(
   listingType: string,
   { city, q, ptype, min, max, limit }: PropertyOptions = {},
 ): Promise<PropertyRecord[]> {
-  await connection();
+  "use cache";
+  cacheTag("properties");
+  cacheLife("hours");
   const db = await getDb();
 
   const filter: Record<string, unknown> = {
@@ -102,7 +104,17 @@ export async function getPublishedProperties(
 
   const docs = await db
     .collection("properties")
-    .find(filter)
+    .find(filter, {
+      // Cards only need these fields — skip the heavy media/amenity arrays.
+      projection: {
+        images: 0,
+        videos: 0,
+        brochure: 0,
+        amenities: 0,
+        pgServices: 0,
+        availableFor: 0,
+      },
+    })
     .sort({ createdAt: -1 })
     .limit(limit ?? 100)
     .toArray();
@@ -118,7 +130,9 @@ export type PropertyTypeStat = {
 };
 
 export async function getPropertyTypeStats(): Promise<PropertyTypeStat[]> {
-  await connection();
+  "use cache";
+  cacheTag("properties");
+  cacheLife("hours");
   const db = await getDb();
   const docs = await db
     .collection("properties")
@@ -155,9 +169,11 @@ export async function getPublishedProperty(
   id: string,
   listingType: string,
 ): Promise<PropertyRecord | null> {
+  "use cache";
   if (!ObjectId.isValid(id)) return null;
 
-  await connection();
+  cacheTag("properties");
+  cacheLife("hours");
   const db = await getDb();
   const doc = await db.collection("properties").findOne({
     _id: new ObjectId(id),

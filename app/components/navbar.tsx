@@ -122,7 +122,7 @@ export default function Navbar() {
             </svg>
           </span>
           <span className="text-base font-bold tracking-tight text-zinc-900">
-            Property <span className="text-blue-600">Kaarobaari</span>
+            Property <span className="text-blue-600">Karobari</span>
           </span>
         </Link>
 

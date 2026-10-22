@@ -1,5 +1,5 @@
 {
-  "name": "property-kaarobaari",
+  "name": "property-karobari",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -17,7 +17,8 @@
     "react-dom": "19.3.0",
     "react-quill-new": "^3.6.0",
     "resend": "^6.33.0",
-    "server-only": "^0.0.1"
+    "server-only": "^0.0.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

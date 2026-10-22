@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 function PlayIcon() {
@@ -246,11 +247,12 @@ export default function PropertyGallery({
                   : `View image ${index + 1}`
               }
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={src}
                 alt={`${title} — image ${index + 1}`}
-                className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+                fill
+                sizes="(min-width: 640px) 25vw, 50vw"
+                className={`object-cover transition-transform duration-300 group-hover:scale-105 ${
                   isLast ? "scale-110 blur-sm" : ""
                 }`}
               />

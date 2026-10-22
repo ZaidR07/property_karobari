@@ -1,7 +1,7 @@
 "use server";
 
 import { ObjectId } from "mongodb";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { getDb } from "@/app/lib/mongodb";
 import { getSession } from "@/app/lib/session";
 
@@ -49,6 +49,7 @@ export async function createCity(input: {
     updatedAt: new Date(),
   });
 
+  updateTag("cities");
   revalidatePath("/admin/master");
   return { success: true };
 }
@@ -92,6 +93,7 @@ export async function updateCity(input: {
       { $set: { city, locations, updatedAt: new Date() } },
     );
 
+  updateTag("cities");
   revalidatePath("/admin/master");
   return { success: true };
 }

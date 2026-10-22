@@ -36,7 +36,7 @@ async function sendEnquiryEmail(enquiry: {
   const { error } = await resend.emails.send({
     from:
       process.env.RESEND_FROM ||
-      "Property Kaarobaari <onboarding@resend.dev>",
+      "Property Karobari <onboarding@resend.dev>",
     to,
     replyTo: enquiry.email ?? undefined,
     subject: `New enquiry from ${enquiry.name}`,

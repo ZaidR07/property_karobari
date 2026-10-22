@@ -18,13 +18,13 @@ type Props = { params: Promise<{ type: string; id: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { type, id } = await params;
   const config = PROPERTY_PAGES[type];
-  if (!config) return { title: "Not found | Property Kaarobaari" };
+  if (!config) return { title: "Not found | Property Karobari" };
 
   const property = await getPublishedProperty(id, config.listingType);
-  if (!property) return { title: "Not found | Property Kaarobaari" };
+  if (!property) return { title: "Not found | Property Karobari" };
 
   return {
-    title: `${property.title || "Property"} | Property Kaarobaari`,
+    title: `${property.title || "Property"} | Property Karobari`,
     description:
       property.location || property.city
         ? [property.location, property.city].filter(Boolean).join(", ")

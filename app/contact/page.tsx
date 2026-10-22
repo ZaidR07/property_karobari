@@ -3,9 +3,9 @@ import PageBanner from "@/app/components/page-banner";
 import ContactForm from "./contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact Us | Property Kaarobaari",
+  title: "Contact Us | Property Karobari",
   description:
-    "Get in touch with Property Kaarobaari for help buying, renting or listing properties.",
+    "Get in touch with Property Karobari for help buying, renting or listing properties.",
 };
 
 function Icon({ path }: { path: React.ReactNode }) {
@@ -47,8 +47,8 @@ const contactInfo = [
   },
   {
     label: "Email",
-    value: "info@propertykaarobaari.com",
-    href: "mailto:info@propertykaarobaari.com",
+    value: "info@propertykarobari.com",
+    href: "mailto:info@propertykarobari.com",
     icon: (
       <>
         <rect x="2" y="4" width="20" height="16" rx="2" />

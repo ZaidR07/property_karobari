@@ -26,10 +26,10 @@ async function sendOtpEmail(email: string, otp: string) {
 
   const resend = new Resend(apiKey);
   const { error } = await resend.emails.send({
-    from: process.env.RESEND_FROM || "Property Kaarobaari <onboarding@resend.dev>",
+    from: process.env.RESEND_FROM || "Property Karobari <onboarding@resend.dev>",
     to: email,
     subject: "Your admin password reset code",
-    html: `<p>Your Property Kaarobaari admin password reset code is <strong style="font-size:18px;letter-spacing:2px">${otp}</strong>.</p><p>It expires in 10 minutes. If you didn't request this, you can ignore this email.</p>`,
+    html: `<p>Your Property Karobari admin password reset code is <strong style="font-size:18px;letter-spacing:2px">${otp}</strong>.</p><p>It expires in 10 minutes. If you didn't request this, you can ignore this email.</p>`,
   });
 
   if (error) throw new Error(error.message);

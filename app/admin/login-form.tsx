@@ -31,7 +31,7 @@ export default function LoginForm() {
         </h1>
       </div>
       <p className="mt-2 text-sm text-zinc-600">
-        Sign in to manage Property Kaarobaari.
+        Sign in to manage Property Karobari.
       </p>
 
       <form action={formAction} className="mt-6 space-y-4">

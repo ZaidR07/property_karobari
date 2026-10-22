@@ -49,11 +49,11 @@ async function sendCredentialsEmail(
   const { error } = await resend.emails.send({
     from:
       process.env.RESEND_FROM ||
-      "Property Kaarobaari <onboarding@resend.dev>",
+      "Property Karobari <onboarding@resend.dev>",
     to: email,
-    subject: "Your Property Kaarobaari admin login credentials",
+    subject: "Your Property Karobari admin login credentials",
     html: `
-      <h2 style="margin:0 0 12px">Welcome to Property Kaarobaari</h2>
+      <h2 style="margin:0 0 12px">Welcome to Property Karobari</h2>
       <p style="margin:0 0 12px">Hi ${escapeHtml(name)}, your admin account has been created as <strong>${escapeHtml(roleLabel)}</strong>.</p>
       <table style="border-collapse:collapse">
         <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td>${escapeHtml(email)}</td></tr>

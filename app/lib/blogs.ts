@@ -1,7 +1,7 @@
 import "server-only";
 
 import { ObjectId } from "mongodb";
-import { connection } from "next/server";
+import { cacheLife, cacheTag } from "next/cache";
 import { getDb } from "./mongodb";
 import type { Blog } from "./blog-utils";
 
@@ -32,7 +32,9 @@ function serialize(doc: Record<string, unknown> & { _id: ObjectId }): Blog {
 }
 
 export async function getAllBlogs(): Promise<Blog[]> {
-  await connection();
+  "use cache";
+  cacheTag("blogs");
+  cacheLife("hours");
   const db = await getDb();
   const docs = await db
     .collection("blogs")
@@ -43,7 +45,9 @@ export async function getAllBlogs(): Promise<Blog[]> {
 }
 
 export async function getPublishedBlogs(): Promise<Blog[]> {
-  await connection();
+  "use cache";
+  cacheTag("blogs");
+  cacheLife("hours");
   const db = await getDb();
   const now = new Date();
   const docs = await db
@@ -61,7 +65,9 @@ export async function getPublishedBlogs(): Promise<Blog[]> {
 }
 
 export async function getBlogBySlug(slug: string): Promise<Blog | null> {
-  await connection();
+  "use cache";
+  cacheTag("blogs");
+  cacheLife("hours");
   const db = await getDb();
   const doc = await db.collection("blogs").findOne({ slug });
   if (!doc) return null;

@@ -28,7 +28,7 @@ export default async function AdminDashboardPage() {
         Dashboard
       </h1>
       <p className="mt-1 text-sm text-zinc-600">
-        Overview of Property Kaarobaari.
+        Overview of Property Karobari.
       </p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

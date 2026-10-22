@@ -23,10 +23,10 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { type } = await params;
   const config = PROPERTY_PAGES[type];
-  if (!config) return { title: "Not found | Property Kaarobaari" };
+  if (!config) return { title: "Not found | Property Karobari" };
 
   return {
-    title: `${config.heading} | Property Kaarobaari`,
+    title: `${config.heading} | Property Karobari`,
     description: config.tagline,
   };
 }

@@ -94,7 +94,7 @@ export default async function Footer() {
                 </svg>
               </span>
               <span className="text-lg font-bold tracking-tight text-zinc-900">
-                Property <span className="text-blue-600">Kaarobaari</span>
+                Property <span className="text-blue-600">Karobari</span>
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-zinc-500">
@@ -193,14 +193,14 @@ export default async function Footer() {
                     }
                   />
                 </span>
-                info@propertykaarobaari.com
+                info@propertykarobari.com
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 border-t border-blue-100 pt-6 text-center text-xs text-zinc-500">
-          © {year} Property Kaarobaari. All rights reserved.
+          © {year} Property Karobari. All rights reserved.
         </div>
       </div>
     </footer>

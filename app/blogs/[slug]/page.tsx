@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getBlogBySlug } from "@/app/lib/blogs";
 import PageBanner from "@/app/components/page-banner";
@@ -12,7 +13,7 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const blog = await getBlogBySlug(slug);
-  if (!blog) return { title: "Blog not found | Property Kaarobaari" };
+  if (!blog) return { title: "Blog not found | Property Karobari" };
 
   const description = blog.content
     ? stripHtml(blog.content).slice(0, 160)
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const image = blog.bannerUrl || blog.thumbnailUrl;
 
   return {
-    title: `${blog.title} | Property Kaarobaari`,
+    title: `${blog.title} | Property Karobari`,
     description,
     openGraph: {
       title: blog.title,
@@ -70,10 +71,10 @@ export default async function BlogDetailPage({ params }: Props) {
             headline: blog.title,
             image: hero ? [hero] : undefined,
             datePublished: blog.createdAt ?? undefined,
-            author: { "@type": "Organization", name: "Property Kaarobaari" },
+            author: { "@type": "Organization", name: "Property Karobari" },
             publisher: {
               "@type": "Organization",
-              name: "Property Kaarobaari",
+              name: "Property Karobari",
             },
             description,
           }),
@@ -113,12 +114,14 @@ export default async function BlogDetailPage({ params }: Props) {
         <article className="overflow-hidden rounded-2xl border border-blue-100/50 bg-white shadow-lg">
           {hero && (
             <div className="w-full bg-blue-50">
-              <div className="aspect-video w-full md:aspect-16/7 lg:aspect-16/6">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <div className="relative aspect-video w-full md:aspect-16/7 lg:aspect-16/6">
+                <Image
                   src={hero}
                   alt={blog.title}
-                  className="block h-full w-full object-cover"
+                  fill
+                  priority
+                  sizes="100vw"
+                  className="object-cover"
                 />
               </div>
             </div>

@@ -1,7 +1,7 @@
 "use server";
 
 import { ObjectId } from "mongodb";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { getDb } from "@/app/lib/mongodb";
 import { deleteFromS3, uploadFilesToS3 } from "@/app/lib/s3";
 import { getSession } from "@/app/lib/session";
@@ -138,6 +138,7 @@ export async function createProperty(
     };
   }
 
+  updateTag("properties");
   revalidatePath("/admin/properties");
   return { success: true };
 }
@@ -180,6 +181,7 @@ export async function deletePropertyMedia(input: {
     // Old object cleanup is best-effort.
   }
 
+  updateTag("properties");
   revalidatePath("/admin/properties");
   return { success: true };
 }
@@ -233,6 +235,7 @@ export async function replacePropertyMedia(input: {
     // Old object cleanup is best-effort.
   }
 
+  updateTag("properties");
   revalidatePath("/admin/properties");
   return { success: true };
 }
@@ -268,6 +271,7 @@ export async function deleteProperty(
     mediaUrls.map((url) => deleteFromS3(url, S3_PREFIX)),
   );
 
+  updateTag("properties");
   revalidatePath("/admin/properties");
   return { success: true };
 }
@@ -342,6 +346,7 @@ export async function updateProperty(input: {
     };
   }
 
+  updateTag("properties");
   revalidatePath("/admin/properties");
   return { success: true };
 }

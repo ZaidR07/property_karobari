@@ -4,7 +4,7 @@ import { getSession } from "../lib/session";
 import LoginForm from "./login-form";
 
 export const metadata: Metadata = {
-  title: "Admin | Property Kaarobaari",
+  title: "Admin | Property Karobari",
 };
 
 // This page reads the session cookie + database on every request.

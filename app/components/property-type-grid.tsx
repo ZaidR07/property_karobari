@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getPropertyTypeStats } from "@/app/lib/properties";
 import { listingTypeToPath } from "@/app/lib/property-format";
@@ -41,12 +42,12 @@ export default async function PropertyTypeGrid() {
                 href={href}
                 className={`group relative block h-60 overflow-hidden rounded-2xl ${cat.bg} shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={cat.img}
                   alt={cat.type}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform group-hover:scale-105"
-                  loading="lazy"
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  className="object-cover transition-transform group-hover:scale-105"
                 />
                 <div
                   className="absolute inset-0 bg-linear-to-b from-white/85 via-white/40 to-transparent"

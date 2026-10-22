@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { PropertyRecord } from "@/app/lib/types";
 import {
@@ -30,12 +31,12 @@ export default function PropertyCard({
     >
       <div className="relative aspect-3/2 bg-blue-50">
         {property.thumbnail ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={property.thumbnail}
             alt={property.title || "Property"}
-            className="block h-full w-full object-cover"
-            loading="lazy"
+            fill
+            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
           />
         ) : (
           <div className="grid h-full w-full place-items-center text-sm text-blue-700">

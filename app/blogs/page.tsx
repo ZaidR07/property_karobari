@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getPublishedBlogs } from "@/app/lib/blogs";
 import PageBanner from "@/app/components/page-banner";
@@ -8,7 +9,7 @@ import { stripHtml, type Blog } from "@/app/lib/blog-utils";
 export const instant = false;
 
 export const metadata: Metadata = {
-  title: "Blogs | Property Kaarobaari",
+  title: "Blogs | Property Karobari",
   description: "Insights and updates on real estate, buying, renting and PGs.",
 };
 
@@ -63,14 +64,14 @@ function BlogCard({ blog }: { blog: Blog }) {
         </div>
       </Link>
 
-      <Link href={href} className="block aspect-3/2 bg-blue-50">
+      <Link href={href} className="relative block aspect-3/2 bg-blue-50">
         {blog.thumbnailUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={blog.thumbnailUrl}
             alt={blog.title}
-            className="block h-full w-full object-cover"
-            loading="lazy"
+            fill
+            sizes="(min-width: 768px) 33vw, 100vw"
+            className="object-cover"
           />
         ) : (
           <div className="grid h-full w-full place-items-center p-6 text-blue-700">

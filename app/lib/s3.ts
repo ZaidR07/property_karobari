@@ -7,20 +7,13 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-
-let loggedBucket = false;
+import sharp from "sharp";
 
 export function getS3() {
   const { AWS_REGION, AWS_S3_BUCKET } = process.env;
   if (!AWS_REGION || !AWS_S3_BUCKET) {
     throw new Error(
       "AWS_REGION and AWS_S3_BUCKET must be set in .env for file uploads.",
-    );
-  }
-  if (!loggedBucket) {
-    loggedBucket = true;
-    console.log(
-      `[s3] Uploading to bucket "${AWS_S3_BUCKET}" (region ${AWS_REGION})`,
     );
   }
   return {
@@ -34,16 +27,34 @@ export function getS3() {
 
 export async function uploadFileToS3(file: File, prefix: string) {
   const { client, bucket, publicBaseUrl } = getS3();
-  const ext =
+  let body: Buffer = Buffer.from(await file.arrayBuffer());
+  let contentType = file.type || "application/octet-stream";
+  let ext =
     path.extname(file.name).replace(".", "").toLowerCase() || "bin";
+
+  // Compress raster images: auto-orient, cap at 1920px wide, convert to WebP.
+  if (
+    contentType.startsWith("image/") &&
+    contentType !== "image/svg+xml" &&
+    contentType !== "image/gif"
+  ) {
+    body = await sharp(body)
+      .rotate()
+      .resize({ width: 1920, withoutEnlargement: true })
+      .webp({ quality: 82 })
+      .toBuffer();
+    contentType = "image/webp";
+    ext = "webp";
+  }
+
   const key = `${prefix}/${Date.now()}-${randomBytes(4).toString("hex")}.${ext}`;
 
   await client.send(
     new PutObjectCommand({
       Bucket: bucket,
       Key: key,
-      Body: Buffer.from(await file.arrayBuffer()),
-      ContentType: file.type || "application/octet-stream",
+      Body: body,
+      ContentType: contentType,
     }),
   );
 
